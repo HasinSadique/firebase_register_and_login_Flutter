@@ -1,6 +1,7 @@
 import 'package:firebase_registera_and_login/LoginPage.dart';
 import 'package:firebase_registera_and_login/RegistrationPage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key key}) : super(key: key);
@@ -12,6 +13,16 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   String _email, _password;
+
+  Future<void> register() async {
+    final formstate = formkey.currentState;
+    formstate.save();
+
+    FirebaseUser newuser = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: _email, password: _password);
+    Navigator.pop(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +69,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
             FlatButton(
               color: Colors.blue,
               onPressed: () {
-                Navigator.pop(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                setState(() {
+                  register();
+                });
               },
               child: Text(
                 "Register",
@@ -92,4 +104,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
     );
   }
+
+
 }

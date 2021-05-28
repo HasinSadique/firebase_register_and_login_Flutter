@@ -1,6 +1,7 @@
 import 'package:firebase_registera_and_login/RegistrationPage.dart';
 import 'package:firebase_registera_and_login/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -12,6 +13,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   String _email, _password;
+
+  Future <void> login() async {
+    final formstate = formkey.currentState;
+
+    if(formstate.validate()){
+      formstate.save();
+      FirebaseUser loginUser = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>Homepage()));
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +70,9 @@ class _LoginPageState extends State<LoginPage> {
             FlatButton(
               color: Colors.blue,
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Homepage()),
-                );
+                setState(() {
+                  login();
+                });
               },
               child: Text(
                 "Login",
@@ -89,10 +100,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                Text("Or, Sign in with"),
+                SizedBox(height: 20,)
+              ],
             )
           ],
         ),
       ),
     );
   }
+
+
 }
